@@ -52,8 +52,7 @@ static int	check_args(int argc, char **argv)
 
 static int	start_threads(t_data *data)
 {
-	pthread_t	monitor;
-	int			i;
+	int	i;
 
 	i = 0;
 	data->start_time = get_time();
@@ -65,9 +64,8 @@ static int	start_threads(t_data *data)
 			return (0);
 		i++;
 	}
-	if (pthread_create(&monitor, NULL, monitor_routine, data))
+	if (pthread_create(&data->monitor, NULL, monitor_routine, data))
 		return (0);
-	pthread_detach(monitor);
 	return (1);
 }
 
@@ -81,6 +79,7 @@ static void	join_threads(t_data *data)
 		pthread_join(data->philos[i].thread, NULL);
 		i++;
 	}
+	pthread_join(data->monitor, NULL);
 }
 
 int	main(int argc, char **argv)

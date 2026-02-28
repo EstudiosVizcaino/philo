@@ -40,14 +40,14 @@ static int	check_all_ate(t_data *data)
 		return (0);
 	count = 0;
 	i = 0;
+	pthread_mutex_lock(&data->meal_mutex);
 	while (i < data->num_philos)
 	{
-		pthread_mutex_lock(&data->meal_mutex);
 		if (data->philos[i].meals_eaten >= data->must_eat)
 			count++;
-		pthread_mutex_unlock(&data->meal_mutex);
 		i++;
 	}
+	pthread_mutex_unlock(&data->meal_mutex);
 	if (count == data->num_philos)
 	{
 		pthread_mutex_lock(&data->print_mutex);

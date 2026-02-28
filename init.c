@@ -77,9 +77,15 @@ int	init_data(t_data *data, int argc, char **argv)
 	if (data->think_time < 0)
 		data->think_time = 0;
 	if (!init_mutexes(data))
+	{
+		cleanup(data);
 		return (0);
+	}
 	if (!init_philos(data))
+	{
+		cleanup(data);
 		return (0);
+	}
 	return (1);
 }
 

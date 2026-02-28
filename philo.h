@@ -47,6 +47,7 @@ typedef struct s_data
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print_mutex;
 	pthread_mutex_t	meal_mutex;
+	pthread_t		monitor;
 	t_philo			*philos;
 }	t_data;
 

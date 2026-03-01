@@ -73,7 +73,7 @@ void	*philo_routine(void *arg)
 	if (philo->data->num_philos == 1)
 		return (lone_philo(philo));
 	if (philo->id % 2 == 0)
-		usleep(1000);
+		ft_usleep(1);
 	while (!is_dead(philo->data))
 	{
 		philo_eat(philo);

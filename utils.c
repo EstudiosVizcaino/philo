@@ -23,10 +23,18 @@ long long	get_time(void)
 void	ft_usleep(long long ms)
 {
 	long long	start;
+	long long	diff;
 
 	start = get_time();
-	while (get_time() - start < ms)
-		usleep(100);
+	diff = 0;
+	while (diff < ms)
+	{
+		if (ms - diff > 1)
+			usleep(1000);
+		else
+			usleep(100);
+		diff = get_time() - start;
+	}
 }
 
 void	print_status(t_philo *philo, char *msg)

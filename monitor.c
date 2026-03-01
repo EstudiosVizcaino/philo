@@ -19,7 +19,7 @@ static int	check_death(t_data *data, int i)
 	pthread_mutex_lock(&data->meal_mutex);
 	elapsed = get_time() - data->philos[i].last_meal_time;
 	pthread_mutex_unlock(&data->meal_mutex);
-	if (elapsed >= data->time_to_die)
+	if (elapsed > data->time_to_die)
 	{
 		pthread_mutex_lock(&data->print_mutex);
 		data->dead = 1;

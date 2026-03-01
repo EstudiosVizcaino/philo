@@ -29,21 +29,20 @@ static void	philo_eat(t_philo *philo)
 	if (philo->id % 2 == 0)
 	{
 		pthread_mutex_lock(philo->right_fork);
-		print_status(philo, "has taken a fork");
 		pthread_mutex_lock(philo->left_fork);
 	}
 	else
 	{
 		pthread_mutex_lock(philo->left_fork);
-		print_status(philo, "has taken a fork");
 		pthread_mutex_lock(philo->right_fork);
 	}
-	print_status(philo, "has taken a fork");
-	print_status(philo, "is eating");
 	pthread_mutex_lock(&data->meal_mutex);
 	philo->last_meal_time = get_time();
 	philo->meals_eaten++;
 	pthread_mutex_unlock(&data->meal_mutex);
+	print_status(philo, "has taken a fork");
+	print_status(philo, "has taken a fork");
+	print_status(philo, "is eating");
 	ft_usleep(data->time_to_eat);
 	pthread_mutex_unlock(philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
@@ -74,15 +73,13 @@ void	*philo_routine(void *arg)
 	if (philo->data->num_philos == 1)
 		return (lone_philo(philo));
 	if (philo->id % 2 == 0)
-		ft_usleep(1);
+		usleep(1000);
 	while (!is_dead(philo->data))
 	{
 		philo_eat(philo);
 		if (is_dead(philo->data))
 			break ;
 		philo_sleep(philo);
-		if (is_dead(philo->data))
-			break ;
 		philo_think(philo);
 	}
 	return (NULL);

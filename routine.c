@@ -21,11 +21,8 @@ static void	*lone_philo(t_philo *philo)
 	return (NULL);
 }
 
-static void	philo_eat(t_philo *philo)
+static void	grab_forks(t_philo *philo)
 {
-	t_data	*data;
-
-	data = philo->data;
 	if (philo->id % 2 == 0)
 	{
 		pthread_mutex_lock(philo->right_fork);
@@ -36,6 +33,14 @@ static void	philo_eat(t_philo *philo)
 		pthread_mutex_lock(philo->left_fork);
 		pthread_mutex_lock(philo->right_fork);
 	}
+}
+
+static void	philo_eat(t_philo *philo)
+{
+	t_data	*data;
+
+	data = philo->data;
+	grab_forks(philo);
 	pthread_mutex_lock(&data->meal_mutex);
 	philo->last_meal_time = get_time();
 	philo->meals_eaten++;
@@ -48,21 +53,16 @@ static void	philo_eat(t_philo *philo)
 	pthread_mutex_unlock(philo->right_fork);
 }
 
-static void	philo_sleep(t_philo *philo)
-{
-	print_status(philo, "is sleeping");
-	ft_usleep(philo->data->time_to_sleep);
-}
-
-static void	philo_think(t_philo *philo)
+static void	philo_rest(t_philo *philo)
 {
 	t_data	*data;
 
 	data = philo->data;
+	print_status(philo, "is sleeping");
+	ft_usleep(data->time_to_sleep);
 	print_status(philo, "is thinking");
-	if (data->num_philos % 2 == 0)
-		return ;
-	ft_usleep(data->think_time);
+	if (data->num_philos % 2 != 0)
+		ft_usleep(data->think_time);
 }
 
 void	*philo_routine(void *arg)
@@ -79,8 +79,7 @@ void	*philo_routine(void *arg)
 		philo_eat(philo);
 		if (is_dead(philo->data))
 			break ;
-		philo_sleep(philo);
-		philo_think(philo);
+		philo_rest(philo);
 	}
 	return (NULL);
 }

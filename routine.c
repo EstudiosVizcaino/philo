@@ -26,12 +26,16 @@ static void	grab_forks(t_philo *philo)
 	if (philo->id % 2 == 0)
 	{
 		pthread_mutex_lock(philo->right_fork);
+		print_status(philo, "has taken a fork");
 		pthread_mutex_lock(philo->left_fork);
+		print_status(philo, "has taken a fork");
 	}
 	else
 	{
 		pthread_mutex_lock(philo->left_fork);
+		print_status(philo, "has taken a fork");
 		pthread_mutex_lock(philo->right_fork);
+		print_status(philo, "has taken a fork");
 	}
 }
 
@@ -45,8 +49,6 @@ static void	philo_eat(t_philo *philo)
 	philo->last_meal_time = get_time();
 	philo->meals_eaten++;
 	pthread_mutex_unlock(&data->meal_mutex);
-	print_status(philo, "has taken a fork");
-	print_status(philo, "has taken a fork");
 	print_status(philo, "is eating");
 	ft_usleep(data->time_to_eat);
 	pthread_mutex_unlock(philo->left_fork);

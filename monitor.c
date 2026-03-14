@@ -36,11 +36,13 @@ static int	check_all_ate(t_data *data)
 {
 	int	i;
 	int	count;
+	int	finished;
 
 	if (data->must_eat == -1)
 		return (0);
 	count = 0;
 	i = 0;
+	finished = 0;
 	pthread_mutex_lock(&data->meal_mutex);
 	while (i < data->num_philos)
 	{
@@ -49,11 +51,12 @@ static int	check_all_ate(t_data *data)
 		i++;
 	}
 	if (count == data->num_philos)
+	{
 		data->all_ate = 1;
+		finished = 1;
+	}
 	pthread_mutex_unlock(&data->meal_mutex);
-	if (data->all_ate)
-		return (1);
-	return (0);
+	return (finished);
 }
 
 void	*monitor_routine(void *arg)

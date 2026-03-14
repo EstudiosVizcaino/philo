@@ -18,16 +18,17 @@ static int	check_death(t_data *data, int i)
 
 	pthread_mutex_lock(&data->meal_mutex);
 	elapsed = get_time() - data->philos[i].last_meal_time;
-	pthread_mutex_unlock(&data->meal_mutex);
-	if (elapsed >= data->time_to_die)
+	if (elapsed > data->time_to_die)
 	{
-		pthread_mutex_lock(&data->print_mutex);
 		data->dead = 1;
+		pthread_mutex_unlock(&data->meal_mutex);
+		pthread_mutex_lock(&data->print_mutex);
 		printf("%lld %d died\n",
 			get_time() - data->start_time, data->philos[i].id);
 		pthread_mutex_unlock(&data->print_mutex);
 		return (1);
 	}
+	pthread_mutex_unlock(&data->meal_mutex);
 	return (0);
 }
 
@@ -47,14 +48,11 @@ static int	check_all_ate(t_data *data)
 			count++;
 		i++;
 	}
-	pthread_mutex_unlock(&data->meal_mutex);
 	if (count == data->num_philos)
-	{
-		pthread_mutex_lock(&data->print_mutex);
 		data->all_ate = 1;
-		pthread_mutex_unlock(&data->print_mutex);
+	pthread_mutex_unlock(&data->meal_mutex);
+	if (data->all_ate)
 		return (1);
-	}
 	return (0);
 }
 

@@ -46,12 +46,7 @@ void	print_status(t_philo *philo, char *msg)
 
 int	is_dead(t_data *data)
 {
-	int	result;
-
-	pthread_mutex_lock(&data->print_mutex);
-	result = data->dead || data->all_ate;
-	pthread_mutex_unlock(&data->print_mutex);
-	return (result);
+	return (data->dead || data->all_ate);
 }
 
 int	ft_atoi(const char *str)

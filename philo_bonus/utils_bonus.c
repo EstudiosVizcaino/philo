@@ -54,14 +54,25 @@ int	ft_atoi(const char *str)
 	return ((int)result);
 }
 
-void	kill_all(t_data_bonus *data)
+void	ft_build_name(char *dst, char *base, int id)
 {
-	int	i;
+	int		i;
+	int		j;
+	char	tmp[4];
 
 	i = 0;
-	while (i < data->num_philos)
-	{
-		kill(data->pids[i], SIGKILL);
-		i++;
-	}
+	j = 0;
+	while (base[i])
+		dst[j++] = base[i++];
+	i = 0;
+	if (id >= 100)
+		tmp[i++] = '0' + (id / 100);
+	if (id >= 10)
+		tmp[i++] = '0' + ((id / 10) % 10);
+	tmp[i++] = '0' + (id % 10);
+	tmp[i] = '\0';
+	i = 0;
+	while (tmp[i])
+		dst[j++] = tmp[i++];
+	dst[j] = '\0';
 }

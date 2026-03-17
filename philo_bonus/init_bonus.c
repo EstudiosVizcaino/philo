@@ -12,29 +12,6 @@
 
 #include "philo_bonus.h"
 
-static void	ft_build_name(char *dst, char *base, int id)
-{
-	int		i;
-	int		j;
-	char	tmp[4];
-
-	i = 0;
-	j = 0;
-	while (base[i])
-		dst[j++] = base[i++];
-	i = 0;
-	if (id >= 100)
-		tmp[i++] = '0' + (id / 100);
-	if (id >= 10)
-		tmp[i++] = '0' + ((id / 10) % 10);
-	tmp[i++] = '0' + (id % 10);
-	tmp[i] = '\0';
-	i = 0;
-	while (tmp[i])
-		dst[j++] = tmp[i++];
-	dst[j] = '\0';
-}
-
 static sem_t	*open_sem(char *name, unsigned int val)
 {
 	sem_t	*sem;
@@ -54,6 +31,7 @@ static int	alloc_arrays(t_data_bonus *data)
 	data->pids = malloc(sizeof(pid_t) * data->num_philos);
 	if (!data->pids)
 		return (0);
+	memset(data->pids, 0, sizeof(pid_t) * data->num_philos);
 	data->philos = malloc(sizeof(t_philo_bonus) * data->num_philos);
 	if (!data->philos)
 		return (0);
@@ -101,11 +79,24 @@ int	init_data(t_data_bonus *data, int argc, char **argv)
 	return (1);
 }
 
-void	cleanup(t_data_bonus *data)
+static void	cleanup_sems(t_data_bonus *data)
 {
-	int		i = 0;
+	int		i;
 	char	name[32];
 
+	i = 0;
+	while (data->philos && i < data->num_philos)
+	{
+		if (data->philos[i].protect)
+			sem_close(data->philos[i].protect);
+		ft_build_name(name, "/philo_prot_", i + 1);
+		sem_unlink(name);
+		i++;
+	}
+}
+
+void	cleanup(t_data_bonus *data)
+{
 	if (data->forks)
 		sem_close(data->forks);
 	if (data->print_sem)
@@ -118,14 +109,7 @@ void	cleanup(t_data_bonus *data)
 	sem_unlink("/philo_print");
 	sem_unlink("/philo_dead");
 	sem_unlink("/philo_meal");
-	while (data->philos && i < data->num_philos)
-	{
-		if (data->philos[i].protect)
-			sem_close(data->philos[i].protect);
-		ft_build_name(name, "/philo_prot_", i + 1);
-		sem_unlink(name);
-		i++;
-	}
+	cleanup_sems(data);
 	free(data->philos);
 	free(data->pids);
 }

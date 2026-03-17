@@ -60,6 +60,19 @@ static int	check_args(int argc, char **argv)
 	return (1);
 }
 
+void	kill_all(t_data_bonus *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->num_philos)
+	{
+		if (data->pids[i] > 0)
+			kill(data->pids[i], SIGKILL);
+		i++;
+	}
+}
+
 static void	start_processes(t_data_bonus *data)
 {
 	int	i;
@@ -102,7 +115,8 @@ int	main(int argc, char **argv)
 	i = 0;
 	while (i < data.num_philos)
 	{
-		waitpid(data.pids[i], NULL, 0);
+		if (data.pids[i] > 0)
+			waitpid(data.pids[i], NULL, 0);
 		sem_post(data.meal_sem);
 		i++;
 	}

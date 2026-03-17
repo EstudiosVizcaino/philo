@@ -69,6 +69,9 @@ long long	get_time(void);
 void		ft_usleep(long long ms);
 void		print_status(t_philo_bonus *philo, char *msg);
 int			ft_atoi(const char *str);
+void		ft_build_name(char *dst, char *base, int id);
+
+/* main_bonus.c */
 void		kill_all(t_data_bonus *data);
 
 #endif

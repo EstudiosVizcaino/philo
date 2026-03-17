@@ -3,3 +3,4 @@ philo_tsan
 *.o
 _codeql_detected_source_root
 docs/
+Doxyfile

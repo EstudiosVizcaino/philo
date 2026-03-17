@@ -24,7 +24,4 @@ fclean:		clean
 
 re:			fclean all
 
-docs:
-			doxygen Doxyfile
-
-.PHONY:		all clean fclean re docs
+.PHONY:		all clean fclean re

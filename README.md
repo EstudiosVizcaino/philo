@@ -31,6 +31,12 @@ make docs
 
 The output is written to `docs/html/index.html`.
 
+An evaluator-focused interactive study guide is also available at:
+
+```
+docs/philo_master_study_guide.html
+```
+
 ### Run
 
 ```

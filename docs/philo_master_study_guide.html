@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>philo — Interactive Master Study Guide</title>
+	<style>
+		:root {
+			--bg: #0f1220;
+			--panel: #171a2b;
+			--panel-2: #1f2440;
+			--text: #eef1ff;
+			--muted: #aeb6d9;
+			--accent: #7aa2ff;
+			--ok: #2cc36b;
+			--warn: #ffbf47;
+			--danger: #ff6b6b;
+			--code: #101424;
+		}
+		* { box-sizing: border-box; }
+		body {
+			margin: 0;
+			font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+			background: linear-gradient(180deg, #0b0e19, var(--bg));
+			color: var(--text);
+			line-height: 1.45;
+		}
+		a { color: #9bc0ff; }
+		.wrapper { max-width: 1200px; margin: 0 auto; padding: 1.2rem; }
+		.hero {
+			background: radial-gradient(circle at top right, #33427a 0%, #1a1e33 45%, #121525 100%);
+			border: 1px solid #2d3460;
+			border-radius: 14px;
+			padding: 1rem 1.2rem;
+			margin-bottom: 1rem;
+		}
+		h1, h2, h3 { margin: .4rem 0 .55rem; line-height: 1.2; }
+		h1 { font-size: 1.75rem; }
+		h2 { font-size: 1.25rem; }
+		h3 { font-size: 1rem; color: #ccd8ff; }
+		.muted { color: var(--muted); }
+		.grid { display: grid; gap: 1rem; }
+		.g2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+		.card {
+			background: var(--panel);
+			border: 1px solid #2a315a;
+			border-radius: 12px;
+			padding: .9rem;
+		}
+		.card.alt { background: var(--panel-2); }
+		code, pre {
+			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+			background: var(--code);
+			border-radius: 8px;
+		}
+		code { padding: .1rem .3rem; }
+		pre { padding: .75rem; overflow: auto; border: 1px solid #293056; }
+		.nav {
+			position: sticky;
+			top: 0;
+			z-index: 10;
+			background: rgba(11, 14, 25, .95);
+			backdrop-filter: blur(7px);
+			border-bottom: 1px solid #2d3460;
+			padding: .5rem 0;
+			margin-bottom: .8rem;
+		}
+		.nav .wrapper { display: flex; flex-wrap: wrap; gap: .5rem; }
+		.nav a {
+			display: inline-block;
+			background: #1e2544;
+			border: 1px solid #36407a;
+			border-radius: 999px;
+			padding: .3rem .7rem;
+			text-decoration: none;
+			font-size: .86rem;
+		}
+		details {
+			background: #131729;
+			border: 1px solid #2a3159;
+			border-radius: 10px;
+			padding: .6rem .8rem;
+		}
+		details + details { margin-top: .5rem; }
+		summary { cursor: pointer; font-weight: 650; }
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: .9rem;
+		}
+		th, td {
+			border: 1px solid #2a3159;
+			padding: .45rem;
+			text-align: left;
+			vertical-align: top;
+		}
+		th { background: #1e2544; }
+		.badge {
+			display: inline-block;
+			padding: .15rem .45rem;
+			border-radius: 999px;
+			font-size: .75rem;
+			border: 1px solid;
+		}
+		.ok { color: var(--ok); border-color: #1f7f4a; }
+		.warn { color: var(--warn); border-color: #8f6d1d; }
+		.danger { color: var(--danger); border-color: #8d2d2d; }
+		.controls { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+		.controls label { font-size: .85rem; color: var(--muted); }
+		input, select, button {
+			background: #101427;
+			color: var(--text);
+			border: 1px solid #3a4680;
+			border-radius: 8px;
+			padding: .35rem .45rem;
+		}
+		button { cursor: pointer; background: #233068; }
+		.small { font-size: .84rem; }
+		.footer-note {
+			margin-top: 1rem;
+			font-size: .84rem;
+			color: var(--muted);
+			border-top: 1px solid #2a3159;
+			padding-top: .7rem;
+		}
+		.kpi {
+			display: flex;
+			flex-wrap: wrap;
+			gap: .7rem;
+			margin-top: .4rem;
+		}
+		.kpi div {
+			background: #141a31;
+			border: 1px solid #2c386d;
+			border-radius: 10px;
+			padding: .5rem .65rem;
+			min-width: 160px;
+		}
+	</style>
+</head>
+<body>
+	<nav class="nav">
+		<div class="wrapper">
+			<a href="#how-to-use">How to Study</a>
+			<a href="#subject-map">Subject + Evaluation Map</a>
+			<a href="#architecture">Architecture</a>
+			<a href="#files">File-by-File</a>
+			<a href="#functions">Function Atlas</a>
+			<a href="#odd-even">Odd vs Even</a>
+			<a href="#examples">Examples</a>
+			<a href="#defense">Defense Q&A</a>
+			<a href="#quiz">Self-Quiz</a>
+		</div>
+	</nav>
+
+	<div class="wrapper">
+		<header class="hero">
+			<h1>philo — Interactive Master Study Guide</h1>
+			<p class="muted">
+				Goal: help you defend this project confidently in front of an evaluator.
+				This guide is based on the actual code in this repository plus the project subject
+				(<code>philosophers.pdf</code>) and evaluation sheet (<code>philosophers_eval.pdf</code>).
+			</p>
+			<div class="kpi">
+				<div><strong>Language</strong><br>C + pthreads + mutexes</div>
+				<div><strong>Threads</strong><br>N philosophers + 1 monitor</div>
+				<div><strong>Files</strong><br>5 source files + 1 header</div>
+				<div><strong>Core rules</strong><br>No global state, no races, ordered logs</div>
+			</div>
+		</header>
+
+		<section id="how-to-use" class="card">
+			<h2>How to use this guide (recommended order)</h2>
+			<ol>
+				<li>Read <strong>Subject + Evaluation Map</strong> to know what evaluators check.</li>
+				<li>Study <strong>Architecture</strong> and <strong>Data ownership</strong> (mutex discipline).</li>
+				<li>Review <strong>File-by-File</strong> and <strong>Function Atlas</strong>.</li>
+				<li>Master <strong>Odd vs Even behavior</strong> and timing formulas.</li>
+				<li>Practice with <strong>Examples</strong> and finish with <strong>Self-Quiz</strong>.</li>
+			</ol>
+		</section>
+
+		<section id="subject-map" class="grid g2" style="margin-top:1rem;">
+			<div class="card">
+				<h2>Subject requirements → current implementation</h2>
+				<table>
+					<thead><tr><th>Requirement</th><th>How this project satisfies it</th></tr></thead>
+					<tbody>
+						<tr><td>One thread per philosopher</td><td><code>start_threads()</code> creates one <code>pthread</code> for each <code>t_philo</code>.</td></tr>
+						<tr><td>One fork per philosopher</td><td><code>init_forks()</code> allocates <code>num_philos</code> mutexes (forks array).</td></tr>
+						<tr><td>Fork protected with mutex</td><td>Each fork is a <code>pthread_mutex_t</code>, locked before eating, unlocked after.</td></tr>
+						<tr><td>No mixed output</td><td><code>print_status()</code> serializes prints with <code>print_mutex</code>.</td></tr>
+						<tr><td>Death detection + race protection</td><td><code>monitor_routine()</code> checks <code>last_meal_time</code> under <code>meal_mutex</code>; shared stop flags are mutex-protected.</td></tr>
+						<tr><td>Stop when everyone ate enough</td><td><code>finished_eating</code> increments in <code>philo_eat()</code>; monitor sets <code>all_ate</code>.</td></tr>
+						<tr><td>No globals</td><td>Shared state is inside <code>t_data</code>, passed by pointers.</td></tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="card alt">
+				<h2>Evaluation sheet checkpoints (defense mindset)</h2>
+				<ul>
+					<li><span class="badge ok">Critical</span> Explain why there is no global variable and where shared state lives.</li>
+					<li><span class="badge ok">Critical</span> Explain how log lines never overlap (<code>print_mutex</code>).</li>
+					<li><span class="badge ok">Critical</span> Explain how “dies while eating” race is prevented (<code>meal_mutex</code> around time bookkeeping).</li>
+					<li><span class="badge warn">Timing</span> Subject/eval use realistic values (generally not below 60ms in evaluator tests).</li>
+					<li><span class="badge warn">Death print SLA</span> Must print death quickly; monitor polls every 1ms (<code>usleep(1000)</code>).</li>
+				</ul>
+				<p class="small muted">Bonus part is specified in the subject, but this repository implements the mandatory threaded version only.</p>
+			</div>
+		</section>
+
+		<section id="architecture" class="card" style="margin-top:1rem;">
+			<h2>Runtime architecture and communication</h2>
+			<pre>
+main()
+ ├─ check_args()
+ ├─ init_data()
+ │   ├─ init_mutexes()
+ │   │   └─ init_forks()
+ │   └─ init_philos()
+ ├─ start_threads()
+ │   ├─ create philosopher threads (philo_routine)
+ │   ├─ create monitor thread (monitor_routine)
+ │   └─ set start_time + ready barrier under meal_mutex
+ ├─ join philosophers
+ ├─ join monitor
+ └─ cleanup()
+			</pre>
+			<div class="grid g2">
+				<div>
+					<h3>Who writes what</h3>
+					<ul>
+						<li>Philosopher threads write: own <code>last_meal_time</code>, own <code>meals_eaten</code>, maybe global <code>finished_eating</code>.</li>
+						<li>Monitor thread writes: <code>dead</code>, <code>all_ate</code>.</li>
+						<li>Main thread writes setup fields before releasing <code>ready</code>.</li>
+					</ul>
+				</div>
+				<div>
+					<h3>Mutex roles</h3>
+					<ul>
+						<li><code>forks[i]</code>: ownership of physical fork i.</li>
+						<li><code>meal_mutex</code>: protects stop flags/timestamps/counters/start barrier fields.</li>
+						<li><code>print_mutex</code>: one line at a time to stdout.</li>
+					</ul>
+				</div>
+			</div>
+		</section>
+
+		<section id="files" class="card" style="margin-top:1rem;">
+			<h2>File-by-file explanation</h2>
+			<details open>
+				<summary><code>philo.h</code> — data model + contracts</summary>
+				<p>Defines <code>t_philo</code> (per-thread local + shared refs) and <code>t_data</code> (shared config/state).
+				Key defense sentence: “Every shared mutable field has an explicit mutex owner.”</p>
+			</details>
+			<details>
+				<summary><code>main.c</code> — validation, startup, shutdown</summary>
+				<ul>
+					<li>Rejects invalid CLI values and wrong argument counts.</li>
+					<li>Thread creation is fail-safe via <code>abort_threads()</code>.</li>
+					<li>Important barrier design: all workers spin on <code>ready</code>, then start together from one <code>start_time</code>.</li>
+				</ul>
+			</details>
+			<details>
+				<summary><code>init.c</code> — deterministic initialization</summary>
+				<ul>
+					<li>Computes <code>think_time = max(0, (die - eat - sleep) / 2)</code>.</li>
+					<li>Builds circular fork topology: philosopher i uses <code>fork[i]</code> and <code>fork[(i+1)%N]</code>.</li>
+					<li>Provides symmetric cleanup to avoid leaks.</li>
+				</ul>
+			</details>
+			<details>
+				<summary><code>routine.c</code> — philosopher behavior loop</summary>
+				<ul>
+					<li>Single philosopher edge case: can take one fork only, then waits until death.</li>
+					<li>Deadlock prevention: odd and even philosophers acquire forks in opposite order.</li>
+					<li>Startup smoothing: even IDs initially sleep <code>time_to_eat</code> for cleaner fork alternation.</li>
+				</ul>
+			</details>
+			<details>
+				<summary><code>monitor.c</code> — stop conditions watchdog</summary>
+				<ul>
+					<li>Polls all philosophers every 1ms.</li>
+					<li>Death if <code>now - last_meal_time &gt; time_to_die</code> (strictly greater).</li>
+					<li>Completion when <code>finished_eating == num_philos</code> and must_eat is configured.</li>
+				</ul>
+			</details>
+			<details>
+				<summary><code>utils.c</code> — low-level helpers</summary>
+				<ul>
+					<li><code>ft_usleep()</code>: tighter timing than a single long <code>usleep</code>.</li>
+					<li><code>print_status()</code>: lock order is <code>print_mutex → meal_mutex</code>.</li>
+					<li><code>is_dead()</code>: unified stop check for routines.</li>
+				</ul>
+			</details>
+		</section>
+
+		<section id="functions" class="card" style="margin-top:1rem;">
+			<h2>Function atlas (what each function does and why)</h2>
+			<div class="controls">
+				<label for="searchFn">Filter by function name:</label>
+				<input id="searchFn" type="text" placeholder="e.g. philo_eat or check_death">
+			</div>
+			<div id="fnList" style="margin-top:.7rem;"></div>
+		</section>
+
+		<section id="odd-even" class="grid g2" style="margin-top:1rem;">
+			<div class="card">
+				<h2>Odd vs Even philosophers: what changes and why</h2>
+				<ul>
+					<li><strong>Fork order asymmetry:</strong> odd IDs take left→right, even IDs take right→left.</li>
+					<li><strong>Reason:</strong> breaks circular wait (deadlock precondition).</li>
+					<li><strong>Initial stagger:</strong> even IDs delay by <code>time_to_eat</code> before first attempt.</li>
+					<li><strong>Reason:</strong> avoids a synchronized initial stampede for forks with large N.</li>
+					<li><strong>Odd N extra think delay:</strong> add computed <code>think_time</code> to keep cycle under death budget.</li>
+				</ul>
+				<p class="small muted">
+					Intuition: with odd N, resource contention is inherently unbalanced. The extra think delay and stagger reduce starvation risk by dephasing thread behavior.
+				</p>
+			</div>
+			<div class="card alt">
+				<h2>Interactive timing calculator</h2>
+				<div class="controls">
+					<label>N <input id="n" type="number" value="5" min="1"></label>
+					<label>die <input id="die" type="number" value="800" min="1"></label>
+					<label>eat <input id="eat" type="number" value="200" min="1"></label>
+					<label>sleep <input id="sleep" type="number" value="200" min="1"></label>
+					<button id="calc">Analyze</button>
+				</div>
+				<div id="calcOut" style="margin-top:.6rem;"></div>
+			</div>
+		</section>
+
+		<section id="examples" class="card" style="margin-top:1rem;">
+			<h2>Evaluation-style examples and expected behavior</h2>
+			<table>
+				<thead><tr><th>Command</th><th>Expectation</th><th>What to explain to evaluator</th></tr></thead>
+				<tbody>
+					<tr><td><code>./philo 1 800 200 200</code></td><td>Single philosopher dies around 800ms.</td><td>Cannot hold two forks; monitor detects death.</td></tr>
+					<tr><td><code>./philo 5 800 200 200</code></td><td>No death (normally).</td><td>Asymmetric lock order + stagger + timing strategy.</td></tr>
+					<tr><td><code>./philo 5 800 200 200 7</code></td><td>Stops when each ate 7.</td><td><code>finished_eating</code> and <code>all_ate</code> path.</td></tr>
+					<tr><td><code>./philo 4 310 200 100</code></td><td>At least one death expected.</td><td>Budget is too tight; monitor prints death quickly.</td></tr>
+					<tr><td><code>./philo 199 600 200 200 10</code></td><td>Stress test, high contention.</td><td>No global state; one fork mutex per fork scales structurally.</td></tr>
+				</tbody>
+			</table>
+		</section>
+
+		<section id="defense" class="card" style="margin-top:1rem;">
+			<h2>Oral defense Q&amp;A (high-value answers)</h2>
+			<details>
+				<summary>“How do you prevent data races?”</summary>
+				<p>By defining ownership: fork mutexes protect fork acquisition; <code>meal_mutex</code> protects all shared lifecycle/time/counter fields; <code>print_mutex</code> serializes logs. Reads/writes of protected data occur under the corresponding mutex.</p>
+			</details>
+			<details>
+				<summary>“How do you prevent deadlock?”</summary>
+				<p>Circular wait is broken with asymmetric fork acquisition (odd left-first, even right-first). This removes the possibility that all threads hold one fork while waiting forever for the other in the same direction.</p>
+			</details>
+			<details>
+				<summary>“Why a monitor thread instead of checking death inside each philosopher only?”</summary>
+				<p>A dedicated monitor centralizes death and completion checks, making stop semantics deterministic and easier to reason about. Philosophers focus on behavior loop; monitor handles global termination conditions.</p>
+			</details>
+			<details>
+				<summary>“Why do even philosophers wait at startup?”</summary>
+				<p>The startup delay (equal to <code>time_to_eat</code>) dephases competing groups. Without it, all threads can contend instantly and unfairly, especially at larger N with tight timing margins.</p>
+			</details>
+			<details>
+				<summary>“What happens if thread creation fails halfway?”</summary>
+				<p><code>abort_threads()</code> marks simulation dead/ready under mutex and joins already-created philosopher threads, then startup returns failure and cleanup runs safely.</p>
+			</details>
+		</section>
+
+		<section id="quiz" class="card" style="margin-top:1rem;">
+			<h2>Self-quiz</h2>
+			<p class="muted small">Select answers and click “Check”.</p>
+			<div>
+				<p><strong>1) Which mutex protects <code>last_meal_time</code>?</strong></p>
+				<select id="q1">
+					<option value="">Choose…</option>
+					<option value="fork">fork mutex</option>
+					<option value="meal">meal_mutex</option>
+					<option value="print">print_mutex</option>
+				</select>
+			</div>
+			<div>
+				<p><strong>2) Why opposite fork order for odd/even IDs?</strong></p>
+				<select id="q2">
+					<option value="">Choose…</option>
+					<option value="speed">To run faster CPU-wise</option>
+					<option value="deadlock">To break circular wait and avoid deadlock</option>
+					<option value="format">To format logs in order</option>
+				</select>
+			</div>
+			<div>
+				<p><strong>3) When does monitor set <code>all_ate</code>?</strong></p>
+				<select id="q3">
+					<option value="">Choose…</option>
+					<option value="everyloop">At each loop, always</option>
+					<option value="musteat">When must_eat is active and finished_eating == num_philos</option>
+					<option value="single">Only for single philosopher mode</option>
+				</select>
+			</div>
+			<button id="checkQuiz" style="margin-top:.5rem;">Check</button>
+			<div id="quizOut" style="margin-top:.6rem;"></div>
+		</section>
+
+		<p class="footer-note">
+			This guide is intentionally standalone (single HTML file, no external assets).
+			It complements code-level docs and is designed for defense preparation.
+		</p>
+	</div>
+
+	<script>
+		const fnData = [
+			["is_valid_arg", "main.c", "Validates digit-only, int-range CLI token."],
+			["check_args", "main.c", "Enforces arity + positive first 4 arguments."],
+			["abort_threads", "main.c", "Sets stop flags and joins already-created philosopher threads on startup failure."],
+			["start_threads", "main.c", "Creates philosopher and monitor threads, initializes shared start barrier."],
+			["main", "main.c", "Program lifecycle: parse -> init -> start -> join -> cleanup."],
+			["init_forks", "init.c", "Allocates and initializes one mutex per fork."],
+			["init_philos", "init.c", "Builds philosopher array and circular fork references."],
+			["init_mutexes", "init.c", "Initializes print/meal mutexes and fork array."],
+			["init_data", "init.c", "Parses args, computes think_time, allocates all resources."],
+			["cleanup", "init.c", "Destroys mutexes and frees arrays safely."],
+			["wait_for_ready", "routine.c", "Philosopher-side start barrier spin until ready flag."],
+			["grab_forks", "routine.c", "Asymmetric fork acquisition by philosopher parity."],
+			["philo_eat", "routine.c", "Takes forks, updates meal metadata, eats, releases forks."],
+			["philo_rest", "routine.c", "Sleep then think (+ optional think_time for odd N)." ],
+			["philo_routine", "routine.c", "Full philosopher thread loop + single philosopher handling."],
+			["check_death", "monitor.c", "Detects starvation and prints death line."],
+			["check_all_ate", "monitor.c", "Detects completion condition when must_eat is set."],
+			["wait_for_ready_monitor", "monitor.c", "Monitor-side start barrier spin."],
+			["monitor_routine", "monitor.c", "Global watchdog loop with 1ms polling."],
+			["get_time", "utils.c", "Wall-clock milliseconds."],
+			["ft_usleep", "utils.c", "Millisecond-aware sleep loop."],
+			["print_status", "utils.c", "Serialized output with stop-check under lock."],
+			["is_dead", "utils.c", "Thread-safe stop condition check."],
+			["ft_atoi", "utils.c", "Simple non-negative decimal parser."]
+		];
+
+		const fnList = document.getElementById('fnList');
+		const searchFn = document.getElementById('searchFn');
+		function renderFns() {
+			const q = searchFn.value.toLowerCase().trim();
+			const rows = fnData.filter(([name, file, desc]) =>
+				name.includes(q) || file.includes(q) || desc.toLowerCase().includes(q));
+			fnList.innerHTML = rows.map(([name, file, desc]) =>
+				`<div class="card alt" style="margin-bottom:.45rem;">
+					<strong>${name}</strong> <span class="muted small">(${file})</span>
+					<div class="small">${desc}</div>
+				</div>`).join('') || '<p class="muted small">No match.</p>';
+		}
+		searchFn.addEventListener('input', renderFns);
+		renderFns();
+
+		document.getElementById('calc').addEventListener('click', () => {
+			const n = Number(document.getElementById('n').value);
+			const die = Number(document.getElementById('die').value);
+			const eat = Number(document.getElementById('eat').value);
+			const sleep = Number(document.getElementById('sleep').value);
+			const budget = die - eat - sleep;
+			const think = Math.max(0, Math.floor(budget / 2));
+			const cycleApprox = eat + sleep + ((n % 2 !== 0) ? think : 0);
+			const margin = die - cycleApprox;
+			let verdict = `<span class="badge ${margin > 0 ? 'ok' : 'danger'}">${margin > 0 ? 'Positive margin' : 'No safety margin'}</span>`;
+			document.getElementById('calcOut').innerHTML = `
+				<p><strong>Computed think_time:</strong> ${think} ms</p>
+				<p><strong>Approx cycle (eat+sleep+optional think):</strong> ${cycleApprox} ms</p>
+				<p><strong>die - cycle:</strong> ${margin} ms ${verdict}</p>
+				<p class="small muted">Note: this is an explanatory approximation (real runtime includes scheduling and fork wait).</p>
+			`;
+		});
+
+		document.getElementById('checkQuiz').addEventListener('click', () => {
+			const ans = {
+				q1: document.getElementById('q1').value === 'meal',
+				q2: document.getElementById('q2').value === 'deadlock',
+				q3: document.getElementById('q3').value === 'musteat'
+			};
+			const score = Object.values(ans).filter(Boolean).length;
+			document.getElementById('quizOut').innerHTML = `
+				<p><strong>Score:</strong> ${score}/3</p>
+				<ul class="small">
+					<li>Q1 ${ans.q1 ? '✅' : '❌'} meal_mutex protects meal/death shared state.</li>
+					<li>Q2 ${ans.q2 ? '✅' : '❌'} opposite order breaks circular wait.</li>
+					<li>Q3 ${ans.q3 ? '✅' : '❌'} all_ate only when must_eat active and all finished.</li>
+				</ul>
+			`;
+		});
+	</script>
+</body>
+</html>

@@ -10,8 +10,27 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/**
+ * @file init.c
+ * @brief Simulation initialisation and resource cleanup.
+ *
+ * Provides init_data() which parses arguments, computes derived
+ * timing values, and allocates every mutex and the philosopher array.
+ * cleanup() is the symmetric teardown function.
+ */
+
 #include "philo.h"
 
+/**
+ * @brief Allocate and initialise one mutex per fork.
+ *
+ * Allocates a contiguous array of @c num_philos mutexes, initialises
+ * them one by one, and on failure destroys the already-initialised
+ * ones before freeing the array.
+ *
+ * @param data  Shared simulation data (num_philos must be set).
+ * @return 1 on success, 0 on allocation or mutex-init failure.
+ */
 static int	init_forks(t_data *data)
 {
 	int	i;
@@ -35,6 +54,16 @@ static int	init_forks(t_data *data)
 	return (1);
 }
 
+/**
+ * @brief Allocate and initialise the philosopher array.
+ *
+ * Each philosopher is assigned a 1-based @c id, zero meal counters,
+ * left fork (forks[i]) and right fork (forks[(i+1)%n]), and a
+ * back-pointer to @p data.
+ *
+ * @param data  Shared simulation data (forks must already be set up).
+ * @return 1 on success, 0 on allocation failure.
+ */
 static int	init_philos(t_data *data)
 {
 	int	i;
@@ -49,14 +78,22 @@ static int	init_philos(t_data *data)
 		data->philos[i].meals_eaten = 0;
 		data->philos[i].last_meal_time = 0;
 		data->philos[i].left_fork = &data->forks[i];
-		data->philos[i].right_fork =
-			&data->forks[(i + 1) % data->num_philos];
+		data->philos[i].right_fork = &data->forks[(i + 1) % data->num_philos];
 		data->philos[i].data = data;
 		i++;
 	}
 	return (1);
 }
 
+/**
+ * @brief Initialise the print mutex, the meal mutex, and the forks.
+ *
+ * Initialises mutexes in the order: print_mutex, meal_mutex, then
+ * calls init_forks(). Any failure destroys what was already created.
+ *
+ * @param data  Shared simulation data.
+ * @return 1 on success, 0 on any mutex-init failure.
+ */
 static int	init_mutexes(t_data *data)
 {
 	if (pthread_mutex_init(&data->print_mutex, NULL))
@@ -77,7 +114,7 @@ static int	init_mutexes(t_data *data)
 
 int	init_data(t_data *data, int argc, char **argv)
 {
-	long long	budget;
+	long long	time_budget;
 
 	memset(data, 0, sizeof(t_data));
 	data->num_philos = ft_atoi(argv[1]);
@@ -88,8 +125,11 @@ int	init_data(t_data *data, int argc, char **argv)
 		data->must_eat = ft_atoi(argv[5]);
 	else
 		data->must_eat = -1;
-	budget = data->time_to_die - data->time_to_eat - data->time_to_sleep;
-	data->think_time = budget > 0 ? budget / 2 : 0;
+	time_budget = data->time_to_die - data->time_to_eat - data->time_to_sleep;
+	if (time_budget > 0)
+		data->think_time = time_budget / 2;
+	else
+		data->think_time = 0;
 	if (!init_mutexes(data))
 		return (0);
 	if (!init_philos(data))

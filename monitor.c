@@ -10,8 +10,30 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/**
+ * @file monitor.c
+ * @brief Dedicated monitor thread: death detection and meal-count check.
+ *
+ * The monitor thread polls once per millisecond. check_death() locks
+ * meal_mutex to read last_meal_time and sets the dead flag, then
+ * prints the death message outside meal_mutex (print_mutex only).
+ * check_all_ate() sets all_ate once finished_eating reaches num_philos.
+ */
+
 #include "philo.h"
 
+/**
+ * @brief Check whether philosopher @p i has exceeded time_to_die.
+ *
+ * Acquires meal_mutex to read last_meal_time and time_to_die. If the
+ * elapsed time is strictly greater than time_to_die, sets data->dead,
+ * releases meal_mutex, acquires print_mutex, and prints the death
+ * message, then releases print_mutex.
+ *
+ * @param data  Shared simulation data.
+ * @param i     Zero-based index of the philosopher to check.
+ * @return 1 if the philosopher died, 0 otherwise.
+ */
 static int	check_death(t_data *data, int i)
 {
 	long long	elapsed;
@@ -33,6 +55,16 @@ static int	check_death(t_data *data, int i)
 	return (0);
 }
 
+/**
+ * @brief Check whether every philosopher has completed must_eat meals.
+ *
+ * Returns 0 immediately if must_eat is -1 (no limit). Otherwise
+ * acquires meal_mutex and checks finished_eating. If all N
+ * philosophers are done, sets all_ate and returns 1.
+ *
+ * @param data  Shared simulation data.
+ * @return 1 if all philosophers have eaten enough, 0 otherwise.
+ */
 static int	check_all_ate(t_data *data)
 {
 	int	finished;
@@ -50,6 +82,14 @@ static int	check_all_ate(t_data *data)
 	return (finished);
 }
 
+/**
+ * @brief Spin until the start barrier (data->ready) is set.
+ *
+ * Mirrors wait_for_ready() in routine.c but operates on a t_data
+ * pointer instead of a t_philo pointer.
+ *
+ * @param data  Shared simulation data.
+ */
 static void	wait_for_ready_monitor(t_data *data)
 {
 	while (1)

@@ -10,6 +10,16 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/**
+ * @file utils.c
+ * @brief Timing, logging, synchronisation helpers, and ft_atoi.
+ *
+ * get_time() returns wall-clock milliseconds; ft_usleep() busy-waits
+ * for precision sleeping; print_status() serialises state-change
+ * messages; is_dead() checks the simulation-stop flags; ft_atoi()
+ * converts a digit string to int.
+ */
+
 #include "philo.h"
 
 long long	get_time(void)

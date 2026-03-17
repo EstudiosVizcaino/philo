@@ -1,0 +1,47 @@
+# Doxyfile — Doxygen configuration for philo
+# Generate HTML docs with: doxygen Doxyfile  (or: make docs)
+
+#---------------------------------------------------------------------------
+# Project settings
+#---------------------------------------------------------------------------
+PROJECT_NAME           = "philo"
+PROJECT_BRIEF          = "Dining Philosophers — threads and mutexes (42 project)"
+OUTPUT_DIRECTORY       = docs
+CREATE_SUBDIRS         = NO
+
+#---------------------------------------------------------------------------
+# Input
+#---------------------------------------------------------------------------
+INPUT                  = .
+FILE_PATTERNS          = *.c *.h
+RECURSIVE              = NO
+EXCLUDE_PATTERNS       = */docs/*
+
+#---------------------------------------------------------------------------
+# Extraction
+#---------------------------------------------------------------------------
+EXTRACT_ALL            = YES
+EXTRACT_STATIC         = YES
+OPTIMIZE_OUTPUT_FOR_C  = YES
+
+#---------------------------------------------------------------------------
+# Output formats
+#---------------------------------------------------------------------------
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_LATEX         = NO
+
+#---------------------------------------------------------------------------
+# Source browser
+#---------------------------------------------------------------------------
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+STRIP_CODE_COMMENTS    = NO
+
+#---------------------------------------------------------------------------
+# Miscellaneous
+#---------------------------------------------------------------------------
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = NO
+HAVE_DOT               = NO

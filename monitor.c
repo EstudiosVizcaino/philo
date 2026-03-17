@@ -14,7 +14,7 @@
  * @file monitor.c
  * @brief Dedicated monitor thread: death detection and meal-count check.
  *
- * The monitor thread polls once per millisecond. check_death() locks
+ * The monitor thread polls multiple times per millisecond. check_death() locks
  * meal_mutex to read last_meal_time and sets the dead flag, then
  * prints the death message outside meal_mutex (print_mutex only).
  * check_all_ate() sets all_ate once finished_eating reaches num_philos.
@@ -26,7 +26,7 @@
  * @brief Check whether philosopher @p i has exceeded time_to_die.
  *
  * Acquires meal_mutex to read last_meal_time and time_to_die. If the
- * elapsed time is strictly greater than time_to_die, sets data->dead,
+ * elapsed time is greater than or equal to time_to_die, sets data->dead,
  * releases meal_mutex, acquires print_mutex, and prints the death
  * message, then releases print_mutex.
  *
@@ -41,7 +41,7 @@ static int	check_death(t_data *data, int i)
 
 	pthread_mutex_lock(&data->meal_mutex);
 	elapsed = get_time() - data->philos[i].last_meal_time;
-	if (elapsed > data->time_to_die)
+	if (elapsed >= data->time_to_die)
 	{
 		data->dead = 1;
 		timestamp = get_time() - data->start_time;
@@ -123,7 +123,7 @@ void	*monitor_routine(void *arg)
 		}
 		if (check_all_ate(data))
 			return (NULL);
-		usleep(1000);
+		usleep(100);
 	}
 	return (NULL);
 }

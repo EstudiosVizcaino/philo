@@ -130,6 +130,17 @@ void		*philo_routine(void *arg);
 /* monitor.c */
 
 /**
+ * @brief Spin until the start barrier (data->ready) is set.
+ *
+ * All threads park here until start_threads() records start_time
+ * and sets the ready flag under meal_mutex. Used by both philosopher
+ * threads and the monitor thread as the shared start barrier.
+ *
+ * @param data  Shared simulation data.
+ */
+void		wait_ready(t_data *data);
+
+/**
  * @brief Entry point for the dedicated monitor thread.
  *
  * Waits for the start barrier, then polls all philosophers once per

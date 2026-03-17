@@ -18,6 +18,8 @@
  * meal_mutex to read last_meal_time and sets the dead flag, then
  * prints the death message outside meal_mutex (print_mutex only).
  * check_all_ate() sets all_ate once finished_eating reaches num_philos.
+ * wait_ready() is the shared start barrier used by both monitor and
+ * philosopher threads.
  */
 
 #include "philo.h"
@@ -85,12 +87,13 @@ static int	check_all_ate(t_data *data)
 /**
  * @brief Spin until the start barrier (data->ready) is set.
  *
- * Mirrors wait_for_ready() in routine.c but operates on a t_data
- * pointer instead of a t_philo pointer.
+ * All threads park here until start_threads() records start_time
+ * and sets the ready flag under meal_mutex, ensuring every thread
+ * begins with the same timing reference.
  *
  * @param data  Shared simulation data.
  */
-static void	wait_for_ready_monitor(t_data *data)
+void	wait_ready(t_data *data)
 {
 	while (1)
 	{
@@ -111,7 +114,7 @@ void	*monitor_routine(void *arg)
 	int		i;
 
 	data = (t_data *)arg;
-	wait_for_ready_monitor(data);
+	wait_ready(data);
 	while (1)
 	{
 		i = 0;

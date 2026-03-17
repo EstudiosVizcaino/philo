@@ -6,7 +6,7 @@
 /*   By: cvizcain <cvizcain@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 18:22:34 by cvizcain          #+#    #+#             */
-/*   Updated: 2026/03/16 22:06:32 by cvizcain         ###   ########.fr       */
+/*   Updated: 2026/03/17 18:12:00 by cvizcain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,9 @@ typedef struct s_philo
  *
  * Holds the parsed argument values, all synchronisation primitives,
  * and the philosopher array. Fields @c dead, @c all_ate, @c ready,
- * and @c start_time, as well as the per-philo fields @c last_meal_time
- * and @c meals_eaten, are all protected by @c meal_mutex.
- * @c print_mutex serialises stdout writes.
+ * @c finished_eating, and @c start_time, as well as the per-philo
+ * fields @c last_meal_time and @c meals_eaten, are all protected by
+ * @c meal_mutex. @c print_mutex serialises stdout writes.
  * Lock order: acquire @c print_mutex before @c meal_mutex.
  */
 typedef struct s_data
@@ -72,6 +72,7 @@ typedef struct s_data
 	int				dead;
 	int				all_ate;
 	int				ready;
+	int				finished_eating;
 	long long		start_time;
 	long long		think_time;
 	pthread_mutex_t	*forks;
@@ -127,6 +128,17 @@ void		cleanup(t_data *data);
 void		*philo_routine(void *arg);
 
 /* monitor.c */
+
+/**
+ * @brief Spin until the start barrier (data->ready) is set.
+ *
+ * All threads park here until start_threads() records start_time
+ * and sets the ready flag under meal_mutex. Used by both philosopher
+ * threads and the monitor thread as the shared start barrier.
+ *
+ * @param data  Shared simulation data.
+ */
+void		wait_ready(t_data *data);
 
 /**
  * @brief Entry point for the dedicated monitor thread.

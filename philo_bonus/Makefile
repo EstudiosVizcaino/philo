@@ -1,12 +1,13 @@
-NAME		= philo
+NAME		= philo_bonus
 
 CC			= cc
 CFLAGS		= -Wall -Wextra -Werror -pthread
 RM			= rm -f
 
-SRCS		= main.c init.c routine.c monitor.c utils.c
+SRCS		= main_bonus.c init_bonus.c routine_bonus.c \
+			monitor_bonus.c utils_bonus.c
 OBJS		= $(SRCS:.c=.o)
-HEADER		= philo.h
+HEADER		= philo_bonus.h
 
 all:		$(NAME)
 
@@ -16,17 +17,12 @@ $(NAME):	$(OBJS)
 %.o:		%.c $(HEADER)
 			$(CC) $(CFLAGS) -c $< -o $@
 
-bonus:
-			$(MAKE) -C philo_bonus
-
 clean:
 			$(RM) $(OBJS)
-			$(MAKE) -C philo_bonus clean
 
 fclean:		clean
 			$(RM) $(NAME)
-			$(MAKE) -C philo_bonus fclean
 
 re:			fclean all
 
-.PHONY:		all clean fclean re bonus
+.PHONY:		all clean fclean re

@@ -10,8 +10,28 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/**
+ * @file monitor.c
+ * @brief Dedicated monitor thread that detects death and meal completion.
+ *
+ * The monitor runs in its own thread and polls all philosophers once per
+ * millisecond. It signals the end of the simulation by setting t_data::dead
+ * when any philosopher exceeds time_to_die, or t_data::all_ate when every
+ * philosopher has eaten at least must_eat meals. All shared-state accesses
+ * are serialised through meal_mutex; the death message is printed after
+ * releasing meal_mutex and acquiring print_mutex to respect the lock order.
+ */
+
 #include "philo.h"
 
+/**
+ * @brief Spin-wait until the simulation start barrier is released.
+ *
+ * Polls t_data::ready under meal_mutex in 100 µs increments.
+ * Returns as soon as the main thread sets ready = 1.
+ *
+ * @param data  Shared simulation data.
+ */
 static void	wait_for_ready_monitor(t_data *data)
 {
 	while (1)
@@ -27,6 +47,19 @@ static void	wait_for_ready_monitor(t_data *data)
 	}
 }
 
+/**
+ * @brief Check whether philosopher @p i has starved; if so, announce death.
+ *
+ * Called while meal_mutex is held. If the elapsed time since the last meal
+ * exceeds time_to_die, sets t_data::dead, releases meal_mutex, then prints
+ * the death message under print_mutex. The caller must not touch meal_mutex
+ * after this function returns 1.
+ *
+ * @param data  Shared simulation data (meal_mutex must be held by caller).
+ * @param i     Index of the philosopher to check.
+ * @param time  Current wall-clock time in milliseconds.
+ * @return 1 if the philosopher has died, 0 otherwise.
+ */
 static int	check_death(t_data *data, int i, long long time)
 {
 	if (time - data->philos[i].last_meal_time > data->time_to_die)
@@ -42,6 +75,19 @@ static int	check_death(t_data *data, int i, long long time)
 	return (0);
 }
 
+/**
+ * @brief Poll all philosophers for death or meal completion.
+ *
+ * Acquires meal_mutex once, then iterates over every philosopher.
+ * A philosopher that has already eaten enough meals is counted as
+ * finished and skipped for death detection. If all are finished,
+ * sets t_data::all_ate and returns 1. If any philosopher has starved,
+ * delegates to check_death() (which releases meal_mutex) and returns 1.
+ * Returns 0 when the simulation should continue.
+ *
+ * @param data  Shared simulation data.
+ * @return 1 if the simulation should end, 0 otherwise.
+ */
 static int	check_philos(t_data *data)
 {
 	int			i;

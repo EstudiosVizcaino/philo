@@ -6,19 +6,9 @@
 /*   By: cvizcain <cvizcain@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 18:26:02 by cvizcain          #+#    #+#             */
-/*   Updated: 2026/03/16 22:06:01 by cvizcain         ###   ########.fr       */
+/*   Updated: 2026/03/17 15:09:57 by cvizcain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-/**
- * @file utils.c
- * @brief Timing, logging, synchronisation helpers, and ft_atoi.
- *
- * get_time() returns wall-clock milliseconds; ft_usleep() busy-waits
- * for precision sleeping; print_status() serialises state-change
- * messages; is_dead() checks the simulation-stop flags; ft_atoi()
- * converts a digit string to int.
- */
 
 #include "philo.h"
 
@@ -35,25 +25,26 @@ void	ft_usleep(long long ms)
 	long long	start;
 
 	start = get_time();
+	if (ms > 5)
+		usleep((ms - 5) * 1000);
 	while ((get_time() - start) < ms)
-		usleep(500);
+		usleep(100);
 }
 
 void	print_status(t_philo *philo, char *msg)
 {
 	t_data		*data;
 	long long	time;
-	int			stopped;
 
 	data = philo->data;
 	pthread_mutex_lock(&data->print_mutex);
 	pthread_mutex_lock(&data->meal_mutex);
-	stopped = data->dead || data->all_ate;
-	if (!stopped)
+	if (!data->dead && !data->all_ate)
+	{
 		time = get_time() - data->start_time;
-	pthread_mutex_unlock(&data->meal_mutex);
-	if (!stopped)
 		printf("%lld %d %s\n", time, philo->id, msg);
+	}
+	pthread_mutex_unlock(&data->meal_mutex);
 	pthread_mutex_unlock(&data->print_mutex);
 }
 

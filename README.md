@@ -67,6 +67,32 @@ The output is written to `docs/html/index.html`.
 | `2 <any>`                 | Death message printed within 10 ms of actual death |
 | `199 600 200 200 10`      | No death, all 199 philosophers eat 10 times  |
 
+## FAQ
+
+### Is the `-pthread` flag allowed by the subject?
+
+**Yes.** The 42 subject for this project explicitly authorizes the full set of
+POSIX-thread functions:
+
+```
+pthread_create, pthread_detach, pthread_join,
+pthread_mutex_init, pthread_mutex_destroy,
+pthread_mutex_lock, pthread_mutex_unlock
+```
+
+The `-pthread` flag is the standard GCC/Clang flag that both:
+
+1. **links** the POSIX threads library (`libpthread`), and
+2. **enables thread-safety definitions** in the standard library (`_REENTRANT`
+   and friends) at compile time.
+
+Without it the above authorized functions would not link or behave correctly.
+The subject requires `-Wall -Wextra -Werror` for correctness and portability;
+`-pthread` is implicitly required by the very functions the subject permits.
+
+> **Note:** `-p_threads` and `-pthreads` are *not* valid flags — the compiler
+> rejects them. Only `-pthread` (no underscore, no trailing `s`) is correct.
+
 ## Resources
 
 ### References

@@ -77,6 +77,8 @@ static int	init_mutexes(t_data *data)
 
 int	init_data(t_data *data, int argc, char **argv)
 {
+	long long	budget;
+
 	memset(data, 0, sizeof(t_data));
 	data->num_philos = ft_atoi(argv[1]);
 	data->time_to_die = ft_atoi(argv[2]);
@@ -86,9 +88,8 @@ int	init_data(t_data *data, int argc, char **argv)
 		data->must_eat = ft_atoi(argv[5]);
 	else
 		data->must_eat = -1;
-	data->think_time = data->time_to_eat * 2 - data->time_to_sleep;
-	if (data->think_time < 0)
-		data->think_time = 0;
+	budget = data->time_to_die - data->time_to_eat - data->time_to_sleep;
+	data->think_time = budget > 0 ? budget / 2 : 0;
 	if (!init_mutexes(data))
 		return (0);
 	if (!init_philos(data))

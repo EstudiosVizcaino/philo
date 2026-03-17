@@ -91,7 +91,7 @@ void	*philo_routine(void *arg)
 		return (NULL);
 	}
 	if (philo->id % 2 == 0)
-		ft_usleep(1);
+		ft_usleep(philo->data->time_to_eat);
 	while (!is_dead(philo->data))
 	{
 		philo_eat(philo);

@@ -108,6 +108,17 @@ void	wait_ready(t_data *data)
 	}
 }
 
+/**
+ * @brief Entry point for the dedicated monitor thread.
+ *
+ * Waits for the start barrier, then polls all philosophers once per
+ * millisecond. Sets t_data::dead and prints the death message if any
+ * philosopher exceeds time_to_die. Sets t_data::all_ate when every
+ * philosopher has finished must_eat meals.
+ *
+ * @param arg  Pointer to the shared t_data struct.
+ * @return Always NULL.
+ */
 void	*monitor_routine(void *arg)
 {
 	t_data	*data;

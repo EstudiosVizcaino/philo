@@ -112,6 +112,17 @@ static int	init_mutexes(t_data *data)
 	return (1);
 }
 
+/**
+ * @brief Initialise all simulation data from command-line arguments.
+ *
+ * Parses @p argv, computes derived timing values, and allocates and
+ * initialises all mutexes and the philosopher array.
+ *
+ * @param data  Pointer to the uninitialised t_data structure.
+ * @param argc  Argument count (5 or 6).
+ * @param argv  Argument vector beginning at @c argv[1].
+ * @return 1 on success, 0 on any allocation or mutex error.
+ */
 int	init_data(t_data *data, int argc, char **argv)
 {
 	long long	time_budget;
@@ -140,6 +151,15 @@ int	init_data(t_data *data, int argc, char **argv)
 	return (1);
 }
 
+/**
+ * @brief Release all resources owned by @p data.
+ *
+ * Destroys every fork mutex, frees the fork and philosopher arrays,
+ * and destroys the print and meal mutexes. Safe to call after a
+ * partial initialisation (checks for NULL pointers).
+ *
+ * @param data  Pointer to the t_data structure to clean up.
+ */
 void	cleanup(t_data *data)
 {
 	int	i;

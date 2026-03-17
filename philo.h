@@ -163,10 +163,11 @@ void		*monitor_routine(void *arg);
 long long	get_time(void);
 
 /**
- * @brief Sleep for exactly @p ms milliseconds using a busy-wait loop.
+ * @brief Sleep for at least @p ms milliseconds using a busy-wait loop.
  *
- * Standard @c usleep has poor precision; this function polls
- * get_time() in 500 µs increments to achieve millisecond accuracy.
+ * Calls usleep() for (ms - 5) ms to do most of the waiting in the
+ * kernel, then busy-polls get_time() in 100 µs increments to achieve
+ * millisecond-level precision. Negative or zero values return immediately.
  *
  * @param ms  Duration to sleep in milliseconds.
  */

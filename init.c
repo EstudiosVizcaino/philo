@@ -23,7 +23,13 @@ static int	init_forks(t_data *data)
 	while (i < data->num_philos)
 	{
 		if (pthread_mutex_init(&data->forks[i], NULL))
+		{
+			while (--i >= 0)
+				pthread_mutex_destroy(&data->forks[i]);
+			free(data->forks);
+			data->forks = NULL;
 			return (0);
+		}
 		i++;
 	}
 	return (1);
@@ -56,9 +62,16 @@ static int	init_mutexes(t_data *data)
 	if (pthread_mutex_init(&data->print_mutex, NULL))
 		return (0);
 	if (pthread_mutex_init(&data->meal_mutex, NULL))
+	{
+		pthread_mutex_destroy(&data->print_mutex);
 		return (0);
+	}
 	if (!init_forks(data))
+	{
+		pthread_mutex_destroy(&data->print_mutex);
+		pthread_mutex_destroy(&data->meal_mutex);
 		return (0);
+	}
 	return (1);
 }
 
@@ -77,10 +90,7 @@ int	init_data(t_data *data, int argc, char **argv)
 	if (data->think_time < 0)
 		data->think_time = 0;
 	if (!init_mutexes(data))
-	{
-		cleanup(data);
 		return (0);
-	}
 	if (!init_philos(data))
 	{
 		cleanup(data);

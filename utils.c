@@ -39,12 +39,11 @@ void	print_status(t_philo *philo, char *msg)
 	pthread_mutex_lock(&data->print_mutex);
 	pthread_mutex_lock(&data->meal_mutex);
 	stopped = data->dead || data->all_ate;
+	if (!stopped)
+		time = get_time() - data->start_time;
 	pthread_mutex_unlock(&data->meal_mutex);
 	if (!stopped)
-	{
-		time = get_time() - data->start_time;
 		printf("%lld %d %s\n", time, philo->id, msg);
-	}
 	pthread_mutex_unlock(&data->print_mutex);
 }
 

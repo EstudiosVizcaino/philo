@@ -15,16 +15,17 @@
 static int	check_death(t_data *data, int i)
 {
 	long long	elapsed;
+	long long	timestamp;
 
 	pthread_mutex_lock(&data->meal_mutex);
 	elapsed = get_time() - data->philos[i].last_meal_time;
 	if (elapsed > data->time_to_die)
 	{
 		data->dead = 1;
+		timestamp = get_time() - data->start_time;
 		pthread_mutex_unlock(&data->meal_mutex);
 		pthread_mutex_lock(&data->print_mutex);
-		printf("%lld %d died\n",
-			get_time() - data->start_time, data->philos[i].id);
+		printf("%lld %d died\n", timestamp, data->philos[i].id);
 		pthread_mutex_unlock(&data->print_mutex);
 		return (1);
 	}

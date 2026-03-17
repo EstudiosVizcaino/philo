@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                           :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: philo <philo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: cvizcain <cvizcain@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/28 00:00:00 by philo             #+#    #+#             */
-/*   Updated: 2026/02/28 00:00:00 by philo            ###   ########.fr       */
+/*   Created: 2026/02/16 18:26:02 by cvizcain          #+#    #+#             */
+/*   Updated: 2026/03/16 22:06:01 by cvizcain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ void	ft_usleep(long long ms)
 	long long	start;
 
 	start = get_time();
-	while (get_time() - start < ms)
-		usleep(100);
+	while ((get_time() - start) < ms)
+		usleep(500);
 }
 
 void	print_status(t_philo *philo, char *msg)

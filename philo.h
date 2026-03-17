@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.h                                           :+:      :+:    :+:   */
+/*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: philo <philo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: cvizcain <cvizcain@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/28 00:00:00 by philo             #+#    #+#             */
-/*   Updated: 2026/02/28 00:00:00 by philo            ###   ########.fr       */
+/*   Created: 2026/02/16 18:22:34 by cvizcain          #+#    #+#             */
+/*   Updated: 2026/03/16 22:06:32 by cvizcain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ typedef struct s_data
 	int				must_eat;
 	int				dead;
 	int				all_ate;
+	int				ready;
+	int				finished_eating;
 	long long		start_time;
 	long long		think_time;
 	pthread_mutex_t	*forks;

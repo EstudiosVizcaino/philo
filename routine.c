@@ -1,24 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   routine.c                                         :+:      :+:    :+:   */
+/*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: philo <philo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: cvizcain <cvizcain@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/28 00:00:00 by philo             #+#    #+#             */
-/*   Updated: 2026/02/28 00:00:00 by philo            ###   ########.fr       */
+/*   Created: 2026/02/16 18:23:19 by cvizcain          #+#    #+#             */
+/*   Updated: 2026/03/16 22:05:56 by cvizcain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	*lone_philo(t_philo *philo)
+static void	wait_for_ready(t_philo *philo)
 {
-	pthread_mutex_lock(philo->left_fork);
-	print_status(philo, "has taken a fork");
-	ft_usleep(philo->data->time_to_die + 1);
-	pthread_mutex_unlock(philo->left_fork);
-	return (NULL);
+	while (1)
+	{
+		pthread_mutex_lock(&philo->data->meal_mutex);
+		if (philo->data->ready)
+		{
+			pthread_mutex_unlock(&philo->data->meal_mutex);
+			break ;
+		}
+		pthread_mutex_unlock(&philo->data->meal_mutex);
+		usleep(100);
+	}
 }
 
 static void	grab_forks(t_philo *philo)
@@ -48,6 +54,8 @@ static void	philo_eat(t_philo *philo)
 	pthread_mutex_lock(&data->meal_mutex);
 	philo->last_meal_time = get_time();
 	philo->meals_eaten++;
+	if (data->must_eat != -1 && philo->meals_eaten == data->must_eat)
+		data->finished_eating++;
 	pthread_mutex_unlock(&data->meal_mutex);
 	print_status(philo, "is eating");
 	ft_usleep(data->time_to_eat);
@@ -72,8 +80,16 @@ void	*philo_routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
+	wait_for_ready(philo);
 	if (philo->data->num_philos == 1)
-		return (lone_philo(philo));
+	{
+		pthread_mutex_lock(philo->left_fork);
+		print_status(philo, "has taken a fork");
+		while (!is_dead(philo->data))
+			usleep(1000);
+		pthread_mutex_unlock(philo->left_fork);
+		return (NULL);
+	}
 	if (philo->id % 2 == 0)
 		ft_usleep(1);
 	while (!is_dead(philo->data))

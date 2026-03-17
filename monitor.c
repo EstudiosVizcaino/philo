@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   monitor.c                                         :+:      :+:    :+:   */
+/*   monitor.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: philo <philo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: cvizcain <cvizcain@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/28 00:00:00 by philo             #+#    #+#             */
-/*   Updated: 2026/02/28 00:00:00 by philo            ###   ########.fr       */
+/*   Created: 2026/02/16 18:22:36 by cvizcain          #+#    #+#             */
+/*   Updated: 2026/03/16 22:05:52 by cvizcain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,23 +34,13 @@ static int	check_death(t_data *data, int i)
 
 static int	check_all_ate(t_data *data)
 {
-	int	i;
-	int	count;
 	int	finished;
 
 	if (data->must_eat == -1)
 		return (0);
-	count = 0;
-	i = 0;
 	finished = 0;
 	pthread_mutex_lock(&data->meal_mutex);
-	while (i < data->num_philos)
-	{
-		if (data->philos[i].meals_eaten >= data->must_eat)
-			count++;
-		i++;
-	}
-	if (count == data->num_philos)
+	if (data->finished_eating == data->num_philos)
 	{
 		data->all_ate = 1;
 		finished = 1;
@@ -59,12 +49,28 @@ static int	check_all_ate(t_data *data)
 	return (finished);
 }
 
+static void	wait_for_ready_monitor(t_data *data)
+{
+	while (1)
+	{
+		pthread_mutex_lock(&data->meal_mutex);
+		if (data->ready)
+		{
+			pthread_mutex_unlock(&data->meal_mutex);
+			break ;
+		}
+		pthread_mutex_unlock(&data->meal_mutex);
+		usleep(100);
+	}
+}
+
 void	*monitor_routine(void *arg)
 {
 	t_data	*data;
 	int		i;
 
 	data = (t_data *)arg;
+	wait_for_ready_monitor(data);
 	while (1)
 	{
 		i = 0;

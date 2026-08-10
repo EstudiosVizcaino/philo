@@ -4,10 +4,11 @@
 
 **A multithreaded solution to the Dining Philosophers problem, written in C.**
 
-[![Language](https://img.shields.io/badge/language-C-00599C?logo=c&logoColor=white)](https://en.wikipedia.org/wiki/C_(programming_language))
-[![Build](https://img.shields.io/badge/build-Makefile-427819?logo=gnu&logoColor=white)](Makefile)
-[![Threads](https://img.shields.io/badge/concurrency-pthreads-orange)](https://man7.org/linux/man-pages/man7/pthreads.7.html)
-[![Norm](https://img.shields.io/badge/42-Norminette-000000)](https://github.com/42School/norminette)
+![Grade](https://img.shields.io/badge/grade-100%2F100-brightgreen?style=flat-square)
+![Norminette](https://img.shields.io/badge/norminette-0%20errors-brightgreen?style=flat-square)
+![Language](https://img.shields.io/badge/language-C-00599C?style=flat-square&logo=c&logoColor=white)
+![42](https://img.shields.io/badge/42-Madrid-000000?style=flat-square)
+![Threads](https://img.shields.io/badge/concurrency-pthreads-orange?style=flat-square)
 
 </div>
 
